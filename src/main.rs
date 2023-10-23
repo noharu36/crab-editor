@@ -98,25 +98,13 @@ impl Crab {
         let mut h = HighlightLines::new(syntax, &ts.themes["base16-ocean.dark"]);
 
         'outer: for i in self.row_offset..self.buffer.len() {
-            let mut s = String::new();
-            for j in &self.buffer[i] {
-                let ele = j.clone();
-                s.push(ele)
-            }
-            println!("バッファ: {:?}, ストリング: {:?}", self.buffer[i], s);
-            let mut escaped = String::new();
-            for line in LinesWithEndings::from(&s) {
-                let ranges: Vec<(Style, &str)> = h.highlight_line(line, &ps).unwrap();
-                escaped = as_24_bit_terminal_escaped(&ranges[..], true);
-            }
-            let vec: Vec<char> = escaped.chars().collect();
-            for j in 0..=vec.len() {
+            for j in 0..=self.buffer[i].len() {
                 if self.cursor == (Cursor { row: i, column: j }) {
                     // 画面上のカーソルの位置がわかった
                     display_cursor = Some((row, col));
                 }
 
-                if let Some(c) = vec.get(j) {
+                if let Some(c) = self.buffer[i].get(j) {
                     // 文字の幅を取得する
                     let width = c.width().unwrap_or(0);
                     if col + width >= cols {
